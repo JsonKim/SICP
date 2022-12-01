@@ -1,3 +1,5 @@
+#lang sicp
+
 (define (square x) (* x x))
 
 (define (max x y)
@@ -18,7 +20,7 @@
 (define (good-enough? guess x)
  (< (abs (- (square guess) x)) (min (/ x 1000) 0.001)))
 
-(define (good-enough? guess x)
+(define (good-enough2? guess x)
  (= (improve guess x) guess))
 
 (define (sqrt x)

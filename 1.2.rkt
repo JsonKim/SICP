@@ -1,9 +1,11 @@
+#lang sicp
+
 (define (factorial n)
  (if (= n 1)
   1
   (* n (factorial (- n 1)))))
 
-(define (factorial n)
+(define (factorial2 n)
  (fact-iter 1 1 n))
 
 (define (fact-iter product counter max-count)
@@ -97,4 +99,71 @@
        (else (+ (pascal (- row 1) col) (pascal (- row 1) (- col 1))))))
 
 (pascal 5 3)
+
+(define (square x) (* x x))
+
+(define (sqrt-iter guess x)
+ (if (good-enough? guess x)
+  guess
+  (sqrt-iter (improve guess x)
+   x)))
+
+(define (sqrt x)
+ (sqrt-iter 1.0 x))
+
+(define (improve y x)
+ (/ (+ (/ x (square y)) (* 2 y)) 3))
+
+(define (good-enough? guess x)
+ (= (improve guess x) guess))
+
+(define (pi) (/ (+ 1 (sqrt 5)) 2))
+
+(define (fast-expt b n)
+  (cond ((= n 0) 1)
+        ((even? n) (square (fast-expt b (/ n 2))))
+        (else (* b (fast-expt b (- n 1))))))
+
+
+(fast-expt 2 8)
+
+;; 1.16
+(define (fast-expt2 b n)
+  (define (fast-iter a b n)
+    (cond ((= n 0) a)
+          ((even? n) (fast-iter a (square b) (/ n 2)))
+          (else (fast-iter (* a b) b (- n 1)))))
+
+  (fast-iter 1 b n))
+
+(fast-expt2 2 8)
+
+;; 1.17
+(define (double n) (+ n n))
+
+(define (halve n) (/ n 2))
+
+(define (mult2 a b)
+  (cond ((= b 0) 0)
+        ((even? b) (double (mult2 a (halve b))))
+        (else (+ a (mult2 a (- b 1))))))
+
+(mult2 3 1)
+(mult2 3 8)
+(mult2 3 5)
+
+;; 1.18
+(define (fast-mult a b)
+  (define (iter n a b)
+    (cond ((= b 0) n)
+          ((even? b) (iter n (double a) (halve b)))
+          (else (iter (+ n a) a (- b 1)))))
+
+  (iter 0 a b))
+
+(fast-mult 3 0)
+(fast-mult 3 1)
+(fast-mult 3 2)
+(fast-mult 3 8)
+(fast-mult 3 5)
 
