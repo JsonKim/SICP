@@ -167,3 +167,72 @@
 (fast-mult 3 8)
 (fast-mult 3 5)
 
+;; 1.19
+(define (square n) (* n n))
+
+(define (fib n)
+ (fib-iter 1 0 0 1 n))
+
+(define (fib-iter a b p q count)
+  (cond ((= count 0) b)
+        ((even? count)
+         (fib-iter a
+                   b
+                   (+ (square p) (square q)) ; p'
+                   (+ (* 2 p q) (square q)); q'
+                   (/ count 2)))
+        (else (fib-iter 
+                (+ (* b q) (* a q) (* a p))
+                (+ (* b p) (* a q))
+                p
+                q
+                (- count 1)))))
+
+(fib 1)
+(fib 2)
+(fib 3)
+(fib 4)
+(fib 5)
+(fib 6)
+(fib 7)
+
+(define (smallest-divisor n)
+ (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (+ test-divisor 1)))))
+
+(define (divides? a b) (= (remainder b a) 0))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+(find-divisor 25 2)
+
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (square (expmod base (/ exp 2) m))
+                    m))
+        (else
+          (remainder (* base (expmod base (- exp 1) m))
+                     m))))
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (fast-prime? n times)
+  (cond ((= times 0) true)
+        ((fermat-test n) (fast-prime? n (- times 1)))
+        (else false)))
+
+(fast-prime? 127 10)
+
+;; 1.21
+(smallest-divisor 199)
+(smallest-divisor 1999)
+(smallest-divisor 19999)
