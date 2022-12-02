@@ -21,7 +21,7 @@
   b
   (inc (p (dec a) b))))
 
-(define (p a b)
+(define (p2 a b)
  (if (= a 0)
   b
   (p (dec a) (inc b))))
@@ -72,12 +72,12 @@
 (define (f2 f n d)
  (* d (f (- n d))))
 
-(define (f n)
- (if (< n 3)
-     n
-     (+ f2 f n 1) (f2 f n 2) (f2 f n 3)))
+(define (f3 n)
+  (if (< n 3)
+    n
+    ( (+ f2 f n 1) (f2 f n 2) (f2 f n 3))))
 
-(f 4)
+(f3 4)
 
 (define (iter-f x1 x2 x3 x n)
  (if (= x n)
@@ -85,7 +85,7 @@
      (iter-f x2 x3 (+ x3 (* 2 x2) (* 3 x1)) (+ x 1) n)))
 
 
-(define (f n)
+(define (f4 n)
  (cond ((= n 1) 1)
        ((= n 2) 2)
        (else (iter-f 0 1 2 2 n))))
@@ -168,8 +168,6 @@
 (fast-mult 3 5)
 
 ;; 1.19
-(define (square n) (* n n))
-
 (define (fib n)
  (fib-iter 1 0 0 1 n))
 
@@ -199,10 +197,14 @@
 (define (smallest-divisor n)
  (find-divisor n 2))
 
+;; 1.23 next에 의해서 검사량은 반으로 줄었지만, 추가적인 if 검사가 수행되므로
+;; 전체 성능은 2배만큼 빨리지지 않게된다.
 (define (find-divisor n test-divisor)
+  (define (next n)
+    (if (= n 2) 3 (+ n 2)))
   (cond ((> (square test-divisor) n) n)
         ((divides? test-divisor n) test-divisor)
-        (else (find-divisor n (+ test-divisor 1)))))
+        (else (find-divisor n (next test-divisor)))))
 
 (define (divides? a b) (= (remainder b a) 0))
 
@@ -236,3 +238,21 @@
 (smallest-divisor 199)
 (smallest-divisor 1999)
 (smallest-divisor 19999)
+
+;; 1.22
+(define (timed-prime-test n)
+  (newline)
+  (display n)
+  (start-prime-test n (runtime)))
+
+(define (start-prime-test n start-time)
+  (if (prime? n)
+    (report-prime (- (runtime) start-time))
+    0))
+
+(define (report-prime elapsed-time)
+  (display " *** ")
+  (display elapsed-time))
+
+(timed-prime-test 19999)
+
